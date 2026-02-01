@@ -6,9 +6,13 @@
 // Use inline styles or existing CSS variables.
 // No routing logic yet, just UI.
 
+// Add navigation item for "Profile".
+// Highlight active item visually (background or left border).
 
+    
 import React from 'react';
 function Sidebar() {
+  const activeItem = 'Dashboard';
   return (
     <div
       style={{
@@ -41,8 +45,9 @@ function Sidebar() {
               borderRadius: '8px',
               cursor: 'pointer',
               color: 'var(--text-primary, #111)',
-              background: item === 'Dashboard' ? 'var(--accent-bg, #e0f2fe)' : 'transparent',
-              fontWeight: item === 'Dashboard' ? '600' : '400'
+              background: item === activeItem ? 'var(--accent-bg, #e0f2fe)' : 'transparent',
+              fontWeight: item === activeItem ? '600' : '400',
+              borderLeft: item === activeItem ? '4px solid var(--accent, #3b82f6)' : '4px solid transparent'
             }}
           >
             {item}

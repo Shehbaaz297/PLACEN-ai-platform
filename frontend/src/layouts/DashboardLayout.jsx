@@ -1,3 +1,18 @@
+// Create a StudentProfile page for a placement portal.
+// Sections:
+// 1. Personal Information (Name, Email, Phone, College, Branch)
+// 2. Academic Details (CGPA, 10th %, 12th %)
+// 3. Skills (displayed as tags/chips)
+// 4. Resume section with upload button (UI only).
+// Design: clean card-based layout, two-column on desktop,
+// single-column on mobile, subtle shadows.
+// No form submission logic yet.
+import React from 'react';  
+// complete the code as comment suggested above 
+
+
+
+
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
