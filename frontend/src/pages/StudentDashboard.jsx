@@ -14,10 +14,10 @@ function StudentDashboard() {
         gap: '16px',
         marginTop: '24px'
       }}>
-        <StatCard title="Applications" value="12" />
-        <StatCard title="Interviews" value="3" />
-        <StatCard title="Offers" value="1" />
-        <StatCard title="Profile Status" value="85%" />
+        <StatCard title="Applications" value="12" icon="📝" />
+        <StatCard title="Interviews" value="3" icon="💬" />
+        <StatCard title="Offers" value="1" icon="🎉" />
+        <StatCard title="Profile Status" value="85%" progress={85} />
       </div>
     </DashboardLayout>
   );
