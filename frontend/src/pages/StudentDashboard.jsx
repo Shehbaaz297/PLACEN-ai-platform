@@ -4,13 +4,14 @@ import StatCard from '../components/StatCard';
 function StudentDashboard() {
   return (
     <DashboardLayout>
-      <h2>Student Dashboard</h2>
-      <p style={{ color: 'var(--text-muted)' }}>
+      <h2 style={{ margin: 0 }}>Student Dashboard</h2>
+      <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>
         Track your placement journey
       </p>
 
       <div style={{
         display: 'flex',
+        flexWrap: 'wrap',
         gap: '16px',
         marginTop: '24px'
       }}>

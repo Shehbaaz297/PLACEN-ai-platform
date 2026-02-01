@@ -64,4 +64,5 @@ function StatCard({ title, value, icon, progress }) {
   );
 }
 
+
 export default StatCard;
