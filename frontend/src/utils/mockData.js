@@ -41,3 +41,11 @@ export const studentApplications = [
         status: "Offer Received"
     }
 ];  
+// Add mock companyStats object with fields:
+// jobsPosted, applicationsReceived, shortlisted, interviews.
+export const companyStats = {
+    jobsPosted: 5,
+    applicationsReceived: 150,
+    shortlisted: 30,
+    interviews: 10
+};

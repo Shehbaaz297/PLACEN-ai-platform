@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentProfile from './pages/StudentProfile';
+import CompanyDashBoard from './pages/CompanyDashBoard';
 import DashboardLayout from './layouts/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -25,6 +26,14 @@ function App() {
               <DashboardLayout>
                 <StudentProfile />
               </DashboardLayout>
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/company/dashboard"
+          element={(
+            <ProtectedRoute allowedRole="company">
+              <CompanyDashBoard />
             </ProtectedRoute>
           )}
         />

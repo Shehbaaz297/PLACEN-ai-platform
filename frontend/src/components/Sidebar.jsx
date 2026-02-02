@@ -37,7 +37,7 @@ function Sidebar() {
         Student Portal
       </h1>
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {['Dashboard', 'Profile', 'Applications', 'Interviews', 'Offers', 'Settings'].map((item) => (
+        {['Dashboard', 'Company Dashboard', 'Profile', 'Applications', 'Interviews', 'Offers', 'Settings'].map((item) => (
           <div
             key={item}
             style={{
