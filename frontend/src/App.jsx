@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentProfile from './pages/StudentProfile';
 import CompanyDashBoard from './pages/CompanyDashBoard';
+import Postjob from './pages/Postjob';
 import DashboardLayout from './layouts/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -34,6 +35,14 @@ function App() {
           element={(
             <ProtectedRoute allowedRole="company">
               <CompanyDashBoard />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/company/post-job"
+          element={(
+            <ProtectedRoute allowedRole="company">
+              <Postjob />
             </ProtectedRoute>
           )}
         />
