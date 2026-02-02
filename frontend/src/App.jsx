@@ -3,19 +3,29 @@ import Home from './pages/Home';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentProfile from './pages/StudentProfile';
 import DashboardLayout from './layouts/DashboardLayout';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route
+          path="/student/dashboard"
+          element={(
+            <ProtectedRoute allowedRole="student">
+              <StudentDashboard />
+            </ProtectedRoute>
+          )}
+        />
         <Route
           path="/student/profile"
           element={(
-            <DashboardLayout>
-              <StudentProfile />
-            </DashboardLayout>
+            <ProtectedRoute allowedRole="student">
+              <DashboardLayout>
+                <StudentProfile />
+              </DashboardLayout>
+            </ProtectedRoute>
           )}
         />
       </Routes>
