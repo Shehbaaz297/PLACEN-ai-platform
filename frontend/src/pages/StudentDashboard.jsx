@@ -1,5 +1,10 @@
+// Refactor StudentProfile to read data from studentProfile in mockData.
+
+import React from 'react';  
+
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatCard from '../components/StatCard';
+import { studentStats } from '../utils/mockData';
 
 function StudentDashboard() {
   return (
@@ -15,10 +20,10 @@ function StudentDashboard() {
         gap: '16px',
         marginTop: '24px'
       }}>
-        <StatCard title="Applications" value="12" icon="📝" />
-        <StatCard title="Interviews" value="3" icon="💬" />
-        <StatCard title="Offers" value="1" icon="🎉" />
-        <StatCard title="Profile Status" value="85%" progress={85} />
+        <StatCard title="Applications" value={studentStats.applications} icon="📝" />
+        <StatCard title="Interviews" value={studentStats.interviews} icon="💬" />
+        <StatCard title="Offers" value={studentStats.offers} icon="🎉" />
+        <StatCard title="Profile Status" value={`${studentStats.profileCompletion}%`} progress={studentStats.profileCompletion} />
       </div>
     </DashboardLayout>
   );

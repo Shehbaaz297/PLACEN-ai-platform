@@ -1,3 +1,5 @@
+import { studentProfile } from '../utils/mockData';
+
 const sectionStyle = {
   background: 'var(--card-bg, #fff)',
   borderRadius: '12px',
@@ -27,8 +29,6 @@ const chipStyle = {
 };
 
 function StudentProfile() {
-  const skills = ['JavaScript', 'React', 'Node.js', 'SQL', 'Data Structures'];
-
   return (
     <div>
       <h2 style={{ margin: 0 }}>Student Profile</h2>
@@ -49,23 +49,19 @@ function StudentProfile() {
           <div style={{ display: 'grid', gap: '12px' }}>
             <div>
               <p style={labelStyle}>Name</p>
-              <p style={valueStyle}>Aarav Sharma</p>
+              <p style={valueStyle}>{studentProfile.name}</p>
             </div>
             <div>
               <p style={labelStyle}>Email</p>
-              <p style={valueStyle}>aarav.sharma@example.com</p>
-            </div>
-            <div>
-              <p style={labelStyle}>Phone</p>
-              <p style={valueStyle}>+91 98765 43210</p>
+              <p style={valueStyle}>{studentProfile.email}</p>
             </div>
             <div>
               <p style={labelStyle}>College</p>
-              <p style={valueStyle}>PLACEN Institute of Technology</p>
+              <p style={valueStyle}>{studentProfile.college}</p>
             </div>
             <div>
               <p style={labelStyle}>Branch</p>
-              <p style={valueStyle}>Computer Science</p>
+              <p style={valueStyle}>{studentProfile.branch}</p>
             </div>
           </div>
         </div>
@@ -75,15 +71,7 @@ function StudentProfile() {
           <div style={{ display: 'grid', gap: '12px' }}>
             <div>
               <p style={labelStyle}>CGPA</p>
-              <p style={valueStyle}>8.7</p>
-            </div>
-            <div>
-              <p style={labelStyle}>10th %</p>
-              <p style={valueStyle}>92%</p>
-            </div>
-            <div>
-              <p style={labelStyle}>12th %</p>
-              <p style={valueStyle}>89%</p>
+              <p style={valueStyle}>{studentProfile.cgpa}</p>
             </div>
           </div>
         </div>
@@ -91,7 +79,7 @@ function StudentProfile() {
         <div style={sectionStyle}>
           <h3 style={{ marginTop: 0 }}>Skills</h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {skills.map((skill) => (
+            {studentProfile.skills.map((skill) => (
               <span key={skill} style={chipStyle}>
                 {skill}
               </span>
