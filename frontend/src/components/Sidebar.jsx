@@ -1,20 +1,11 @@
-// Create a Sidebar component for a student dashboard.
-// Include a vertical navigation with items:
-// Dashboard, Profile, Applications, Interviews, Offers, Settings.
-// Design: fixed width, light background, subtle border-right,
-// active item highlight, clean spacing.
-// Use inline styles or existing CSS variables.
-// No routing logic yet, just UI.
-
-// Add navigation item for "Profile".
-// Highlight active item visually (background or left border).
-
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getCurrentUser } from '../utils/auth';
 
 function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const currentUser = getCurrentUser();
 
   const studentMenuItems = [
     { label: 'Dashboard', path: '/student/dashboard' },
@@ -24,10 +15,35 @@ function Sidebar() {
     { label: 'Profile', path: '/student/profile' }
   ];
 
+  const alumniMenuItems = [
+    { label: 'Alumni Dashboard', path: '/alumni/dashboard' }
+  ];
+
+  const tpoMenuItems = [
+    { label: 'TPO Dashboard', path: '/tpo/dashboard' }
+  ];
+
   const companyMenuItems = [
     { label: 'Company Dashboard', path: '/company/dashboard' },
     { label: 'Post Job', path: '/company/post-job' }
   ];
+
+  // Determine which menu to show based on user role
+  let menuItems = [];
+  let portalTitle = 'Student Portal';
+
+  if (currentUser?.role === 'alumni') {
+    menuItems = alumniMenuItems;
+    portalTitle = 'Alumni Portal';
+  } else if (currentUser?.role === 'tpo') {
+    menuItems = tpoMenuItems;
+    portalTitle = 'TPO Portal';
+  } else if (currentUser?.role === 'company') {
+    menuItems = companyMenuItems;
+    portalTitle = 'Company Portal';
+  } else {
+    menuItems = studentMenuItems;
+  }
 
   const isActive = (path) => location.pathname === path;
 
@@ -52,10 +68,10 @@ function Sidebar() {
           color: 'var(--text-primary, #111)'
         }}
       >
-        Student Portal
+        {portalTitle}
       </h1>
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        {studentMenuItems.map((item) => (
+        {menuItems.map((item) => (
           <div
             key={item.path}
             onClick={() => navigate(item.path)}

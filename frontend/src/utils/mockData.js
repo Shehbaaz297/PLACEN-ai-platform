@@ -196,3 +196,226 @@ export const getCalculatedStats = () => {
         profileCompletion: studentStats.profileCompletion
     };
 };
+
+// Alumni Mock Data
+export const alumniStats = {
+    studentsMentored: 24,
+    referralsMade: 8,
+    activeMentorships: 5,
+    sessionsConducted: 47
+};
+
+export const mentorshipRequests = [
+    {
+        id: 1,
+        studentName: "Priya Sharma",
+        branch: "Computer Science",
+        year: "4th Year",
+        requestedSkill: "System Design",
+        message: "Looking for guidance on preparation for system design interviews.",
+        requestedDate: "2024-01-28"
+    },
+    {
+        id: 2,
+        studentName: "Arjun Kumar",
+        branch: "Information Technology",
+        year: "3rd Year",
+        requestedSkill: "Full Stack Development",
+        message: "Need mentorship to build full stack projects for portfolio.",
+        requestedDate: "2024-01-27"
+    },
+    {
+        id: 3,
+        studentName: "Neha Patel",
+        branch: "Computer Science",
+        year: "Final Year",
+        requestedSkill: "Data Science & ML",
+        message: "Interested in learning machine learning applications and best practices.",
+        requestedDate: "2024-01-26"
+    },
+    {
+        id: 4,
+        studentName: "Rohit Singh",
+        branch: "Computer Science",
+        year: "3rd Year",
+        requestedSkill: "Cloud Architecture",
+        message: "Want to understand AWS and cloud deployment patterns.",
+        requestedDate: "2024-01-25"
+    },
+    {
+        id: 5,
+        studentName: "Ananya Gupta",
+        branch: "Information Technology",
+        year: "Final Year",
+        requestedSkill: "Interview Prep",
+        message: "Need mock interviews and coding practice for placements.",
+        requestedDate: "2024-01-24"
+    }
+];
+
+export const alumniActivity = [
+    {
+        id: 1,
+        action: "Accepted mentorship request from Rahul Verma",
+        timestamp: "2 hours ago"
+    },
+    {
+        id: 2,
+        action: "Conducted mentorship session with Priya Sharma",
+        timestamp: "5 hours ago"
+    },
+    {
+        id: 3,
+        action: "Made referral to Google for Sanjay Nair",
+        timestamp: "1 day ago"
+    },
+    {
+        id: 4,
+        action: "Completed mentorship with Kavya Singh - Moved to Offer Stage",
+        timestamp: "2 days ago"
+    },
+    {
+        id: 5,
+        action: "Made referral to Microsoft for Divya Kumari",
+        timestamp: "3 days ago"
+    },
+    {
+        id: 6,
+        action: "Accepted mentorship request from Vivek Rao",
+        timestamp: "3 days ago"
+    }
+];
+
+// TPO Mock Data
+export const tpoStats = {
+    totalStudents: 485,
+    companiesRegistered: 42,
+    studentsPlaced: 328,
+    averagePackage: "7.8 LPA"
+};
+
+export const collegeStudents = [
+    {
+        id: 1,
+        name: "Aarav Sharma",
+        branch: "Computer Science",
+        cgpa: 8.9,
+        placementStatus: "Placed",
+        company: "Google"
+    },
+    {
+        id: 2,
+        name: "Diya Patel",
+        branch: "Information Technology",
+        cgpa: 8.7,
+        placementStatus: "Placed",
+        company: "Microsoft"
+    },
+    {
+        id: 3,
+        name: "Vihaan Kumar",
+        branch: "Computer Science",
+        cgpa: 8.5,
+        placementStatus: "Not Placed",
+        company: "-"
+    },
+    {
+        id: 4,
+        name: "Ananya Singh",
+        branch: "Electronics",
+        cgpa: 8.3,
+        placementStatus: "Placed",
+        company: "Amazon"
+    },
+    {
+        id: 5,
+        name: "Arjun Reddy",
+        branch: "Information Technology",
+        cgpa: 8.8,
+        placementStatus: "Placed",
+        company: "Adobe"
+    },
+    {
+        id: 6,
+        name: "Isha Gupta",
+        branch: "Computer Science",
+        cgpa: 9.1,
+        placementStatus: "Placed",
+        company: "Google"
+    },
+    {
+        id: 7,
+        name: "Rohan Verma",
+        branch: "Information Technology",
+        cgpa: 7.9,
+        placementStatus: "Not Placed",
+        company: "-"
+    },
+    {
+        id: 8,
+        name: "Anika Joshi",
+        branch: "Computer Science",
+        cgpa: 8.6,
+        placementStatus: "Placed",
+        company: "Flipkart"
+    }
+];
+
+export const partnerCompanies = [
+    {
+        id: 1,
+        companyName: "Google",
+        rolesOffered: "SDE, SDE-2",
+        studentsHired: 18,
+        package: "18-25 LPA"
+    },
+    {
+        id: 2,
+        companyName: "Microsoft",
+        rolesOffered: "Software Engineer",
+        studentsHired: 22,
+        package: "15-20 LPA"
+    },
+    {
+        id: 3,
+        companyName: "Amazon",
+        rolesOffered: "SDE-1, SDE-2",
+        studentsHired: 35,
+        package: "12-18 LPA"
+    },
+    {
+        id: 4,
+        companyName: "Adobe",
+        rolesOffered: "Software Engineer",
+        studentsHired: 12,
+        package: "14-18 LPA"
+    },
+    {
+        id: 5,
+        companyName: "Flipkart",
+        rolesOffered: "SDE, Data Analyst",
+        studentsHired: 28,
+        package: "10-15 LPA"
+    },
+    {
+        id: 6,
+        companyName: "Oracle",
+        rolesOffered: "Application Developer",
+        studentsHired: 15,
+        package: "8-12 LPA"
+    },
+    {
+        id: 7,
+        companyName: "Infosys",
+        rolesOffered: "System Engineer",
+        studentsHired: 45,
+        package: "4-6 LPA"
+    },
+    {
+        id: 8,
+        companyName: "TCS",
+        rolesOffered: "Developer, Analyst",
+        studentsHired: 52,
+        package: "3.5-5.5 LPA"
+    }
+];

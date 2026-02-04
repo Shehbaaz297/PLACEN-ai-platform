@@ -7,6 +7,8 @@ import StudentProfile from './pages/StudentProfile';
 import StudentJobs from './pages/StudentJobs';
 import StudentApplications from "./pages/StudentApplications";
 import StudentAnalytics from "./pages/StudentAnalytics";
+import AlumniDashboard from "./pages/AlumniDashboard";
+import TPODashboard from "./pages/TPODashboard";
 
 import CompanyDashBoard from './pages/CompanyDashBoard';
 import Postjob from './pages/Postjob';
@@ -76,6 +78,22 @@ function App() {
           element={(
             <ProtectedRoute allowedRole="company">
               <Postjob />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/alumni/dashboard"
+          element={(
+            <ProtectedRoute allowedRole="alumni">
+              <AlumniDashboard />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/tpo/dashboard"
+          element={(
+            <ProtectedRoute allowedRole="tpo">
+              <TPODashboard />
             </ProtectedRoute>
           )}
         />
