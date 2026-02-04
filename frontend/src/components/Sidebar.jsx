@@ -19,8 +19,9 @@ function Sidebar() {
   const studentMenuItems = [
     { label: 'Dashboard', path: '/student/dashboard' },
     { label: 'Jobs', path: '/student/jobs' },
-    { label: 'Profile', path: '/student/profile' },
-    { label: 'Applications', path: '/student/applications' }
+    { label: 'Applications', path: '/student/applications' },
+    { label: 'Analytics', path: '/student/analytics' },
+    { label: 'Profile', path: '/student/profile' }
   ];
 
   const companyMenuItems = [

@@ -6,6 +6,7 @@ import StudentDashboard from './pages/StudentDashboard';
 import StudentProfile from './pages/StudentProfile';
 import StudentJobs from './pages/StudentJobs';
 import StudentApplications from "./pages/StudentApplications";
+import StudentAnalytics from "./pages/StudentAnalytics";
 
 import CompanyDashBoard from './pages/CompanyDashBoard';
 import Postjob from './pages/Postjob';
@@ -24,6 +25,14 @@ function App() {
     </ProtectedRoute>
   )}
 />
+        <Route
+          path="/student/analytics"
+          element={(
+            <ProtectedRoute allowedRole="student">
+              <StudentAnalytics />
+            </ProtectedRoute>
+          )}
+        />
 
         <Route path="/login" element={<Login />} />
 
