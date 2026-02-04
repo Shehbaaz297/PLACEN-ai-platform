@@ -4,24 +4,9 @@
 // 2. studentStats object (applications, interviews, offers, profileCompletion).
 // 3. studentApplications array with company, role, appliedDate, status.
 // This file will act as a fake backend for now.
-export const studentProfile = {
-  name: "John Doe",
-  email: "john.doe@example.com",   
-    college: "ABC University",
 
-    branch: "Computer Science",
-    cgpa: 8.5,
-    skills: ["JavaScript", "React", "Node.js", "CSS"]
-};
-
-export const studentStats = {
-    applications: 12,
-    interviews: 3,
-    offers: 1,
-    profileCompletion: 85
-};
-
-export const studentApplications = [
+// In-memory store for applications (persists during session)
+let applicationsStore = [
     {
         company: "Tech Corp",
         role: "Frontend Developer",
@@ -40,7 +25,31 @@ export const studentApplications = [
         appliedDate: "2024-01-25",
         status: "Offer Received"
     }
-];  
+];
+
+export const studentProfile = {
+  name: "John Doe",
+  email: "john.doe@example.com",   
+    college: "ABC University",
+
+    branch: "Computer Science",
+    cgpa: 8.5,
+    skills: ["JavaScript", "React", "Node.js", "CSS"]
+};
+
+export const studentStats = {
+    applications: 12,
+    interviews: 3,
+    offers: 1,
+    profileCompletion: 85
+};
+
+// Getter for studentApplications (returns current store)
+export const getStudentApplications = () => applicationsStore;
+
+// Export initial data for backward compatibility
+export const studentApplications = applicationsStore;
+
 // Add mock companyStats object with fields:
 // jobsPosted, applicationsReceived, shortlisted, interviews.
 export const companyStats = {
@@ -50,7 +59,8 @@ export const companyStats = {
     interviews: 10
 };
 
-export const availableJobs = [
+// In-memory store for jobs (persists during session)
+let jobsStore = [
     {
         id: 1,
         company: "Tech Corp",
@@ -132,3 +142,57 @@ export const availableJobs = [
         applied: false
     }
 ];
+
+// Getter for available jobs (returns current store)
+export const getAvailableJobs = () => jobsStore;
+
+// Export initial data for backward compatibility
+export const availableJobs = jobsStore;
+
+// Utility: Apply to a job and sync with applications
+export const applyToJob = (jobId) => {
+    // Find the job
+    const job = jobsStore.find(j => j.id === jobId);
+    if (!job) return false;
+
+    // Check if already applied
+    if (job.applied) return false;
+
+    // Check if duplicate application exists
+    const alreadyApplied = applicationsStore.some(
+        app => app.company === job.company && app.role === job.title
+    );
+    if (alreadyApplied) return false;
+
+    // Mark job as applied
+    job.applied = true;
+
+    // Add to applications
+    const today = new Date().toISOString().split('T')[0];
+    applicationsStore.push({
+        company: job.company,
+        role: job.title,
+        appliedDate: today,
+        status: "Applied"
+    });
+
+    return true;
+};
+
+// Utility: Get calculated stats based on current applications
+export const getCalculatedStats = () => {
+    const totalApplications = applicationsStore.length;
+    const interviews = applicationsStore.filter(
+        app => app.status.includes("Interview")
+    ).length;
+    const offers = applicationsStore.filter(
+        app => app.status.includes("Offer")
+    ).length;
+
+    return {
+        applications: totalApplications,
+        interviews: interviews,
+        offers: offers,
+        profileCompletion: studentStats.profileCompletion
+    };
+};

@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { availableJobs } from '../utils/mockData';
+import { getAvailableJobs, applyToJob } from '../utils/mockData';
 
 function StudentJobs() {
-  const [jobs, setJobs] = useState(availableJobs);
+  const [jobs, setJobs] = useState([]);
   const [filterType, setFilterType] = useState('All');
 
+  // Initialize jobs on mount
+  useEffect(() => {
+    setJobs(getAvailableJobs());
+  }, []);
+
   const handleApply = (jobId) => {
-    setJobs(jobs.map(job =>
-      job.id === jobId ? { ...job, applied: true } : job
-    ));
+    // Apply to job and update state
+    const success = applyToJob(jobId);
+    if (success) {
+      // Get fresh jobs state and update UI
+      setJobs([...getAvailableJobs()]);
+    }
   };
 
   const filteredJobs = filterType === 'All'

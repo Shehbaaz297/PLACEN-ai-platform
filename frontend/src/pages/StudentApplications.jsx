@@ -1,5 +1,6 @@
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { studentApplications } from '../utils/mockData';
+import { getStudentApplications } from '../utils/mockData';
 
 const tableWrapperStyle = {
   background: 'var(--card-bg, #fff)',
@@ -44,6 +45,22 @@ const statusColors = {
 };
 
 function StudentApplications() {
+  const [applications, setApplications] = useState([]);
+
+  // Fetch applications on mount and set up polling to sync
+  useEffect(() => {
+    const updateApplications = () => {
+      setApplications(getStudentApplications());
+    };
+
+    updateApplications();
+
+    // Poll for changes every 500ms to catch updates from other pages
+    const interval = setInterval(updateApplications, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <DashboardLayout>
       <h2 style={{ margin: 0 }}>Applications</h2>
@@ -64,7 +81,7 @@ function StudentApplications() {
                 </tr>
               </thead>
               <tbody>
-                {studentApplications.map((app) => (
+                {applications.map((app) => (
                   <tr key={`${app.company}-${app.role}`}>
                     <td style={tdStyle}>{app.company}</td>
                     <td style={tdStyle}>{app.role}</td>

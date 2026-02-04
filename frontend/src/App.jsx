@@ -1,8 +1,12 @@
+import Login from "./pages/Login";
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentProfile from './pages/StudentProfile';
 import StudentJobs from './pages/StudentJobs';
+import StudentApplications from "./pages/StudentApplications";
+
 import CompanyDashBoard from './pages/CompanyDashBoard';
 import Postjob from './pages/Postjob';
 import DashboardLayout from './layouts/DashboardLayout';
@@ -12,6 +16,17 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route
+  path="/student/applications"
+  element={(
+    <ProtectedRoute allowedRole="student">
+      <StudentApplications />
+    </ProtectedRoute>
+  )}
+/>
+
+        <Route path="/login" element={<Login />} />
+
         <Route path="/" element={<Home />} />
         <Route
           path="/student/dashboard"
