@@ -9,15 +9,32 @@
 // Add navigation item for "Profile".
 // Highlight active item visually (background or left border).
 
-    
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 function Sidebar() {
-  const activeItem = 'Dashboard';
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const studentMenuItems = [
+    { label: 'Dashboard', path: '/student/dashboard' },
+    { label: 'Jobs', path: '/student/jobs' },
+    { label: 'Profile', path: '/student/profile' },
+    { label: 'Applications', path: '/student/applications' }
+  ];
+
+  const companyMenuItems = [
+    { label: 'Company Dashboard', path: '/company/dashboard' },
+    { label: 'Post Job', path: '/company/post-job' }
+  ];
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <div
       style={{
         width: '240px',
-        height: '100vh',   
+        height: '100vh',
         background: 'var(--sidebar-bg, #f9f9f9)',
         borderRight: '1px solid var(--border-color, #e0e0e0)',
         display: 'flex',
@@ -36,21 +53,23 @@ function Sidebar() {
       >
         Student Portal
       </h1>
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {['Dashboard', 'Company Dashboard', 'Post Job', 'Profile', 'Applications', 'Interviews', 'Offers', 'Settings'].map((item) => (
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {studentMenuItems.map((item) => (
           <div
-            key={item}
+            key={item.path}
+            onClick={() => navigate(item.path)}
             style={{
               padding: '12px 16px',
               borderRadius: '8px',
               cursor: 'pointer',
-              color: 'var(--text-primary, #111)',
-              background: item === activeItem ? 'var(--accent-bg, #e0f2fe)' : 'transparent',
-              fontWeight: item === activeItem ? '600' : '400',
-              borderLeft: item === activeItem ? '4px solid var(--accent, #3b82f6)' : '4px solid transparent'
+              color: isActive(item.path) ? 'var(--accent, #3b82f6)' : 'var(--text-primary, #111)',
+              background: isActive(item.path) ? 'var(--accent-bg, #e0f2fe)' : 'transparent',
+              fontWeight: isActive(item.path) ? '600' : '400',
+              borderLeft: isActive(item.path) ? '4px solid var(--accent, #3b82f6)' : '4px solid transparent',
+              transition: 'all 0.2s ease'
             }}
           >
-            {item}
+            {item.label}
           </div>
         ))}
       </nav>
@@ -58,5 +77,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar; 
-// is it done?                 
+export default Sidebar;                 

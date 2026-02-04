@@ -49,3 +49,86 @@ export const companyStats = {
     shortlisted: 30,
     interviews: 10
 };
+
+export const availableJobs = [
+    {
+        id: 1,
+        company: "Tech Corp",
+        title: "Frontend Developer Intern",
+        type: "Internship",
+        location: "Bangalore, India",
+        package: "₹15,000/month",
+        skills: ["React", "JavaScript", "CSS"],
+        applied: false
+    },
+    {
+        id: 2,
+        company: "Innovate Ltd",
+        title: "Full Stack Developer",
+        type: "Placement",
+        location: "Hyderabad, India",
+        package: "₹8 - 10 LPA",
+        skills: ["Node.js", "React", "MongoDB", "AWS"],
+        applied: false
+    },
+    {
+        id: 3,
+        company: "Web Solutions",
+        title: "Backend Developer Intern",
+        type: "Internship",
+        location: "Mumbai, India",
+        package: "₹12,000/month",
+        skills: ["Python", "Django", "SQL"],
+        applied: false
+    },
+    {
+        id: 4,
+        company: "Cloud Systems",
+        title: "DevOps Engineer",
+        type: "Placement",
+        location: "Pune, India",
+        package: "₹12 - 15 LPA",
+        skills: ["Docker", "Kubernetes", "CI/CD", "Linux"],
+        applied: false
+    },
+    {
+        id: 5,
+        company: "Data Insights",
+        title: "Data Science Intern",
+        type: "Internship",
+        location: "Remote",
+        package: "₹18,000/month",
+        skills: ["Python", "Machine Learning", "Pandas", "Scikit-learn"],
+        applied: false
+    },
+    {
+        id: 6,
+        company: "Mobile First",
+        title: "iOS Developer",
+        type: "Placement",
+        location: "Bangalore, India",
+        package: "₹10 - 13 LPA",
+        skills: ["Swift", "Xcode", "iOS", "REST APIs"],
+        applied: false
+    },
+    {
+        id: 7,
+        company: "E-Commerce Hub",
+        title: "Android Developer Intern",
+        type: "Internship",
+        location: "Delhi, India",
+        package: "₹14,000/month",
+        skills: ["Kotlin", "Android", "Java", "Firebase"],
+        applied: false
+    },
+    {
+        id: 8,
+        company: "Finance Tech",
+        title: "QA Engineer",
+        type: "Placement",
+        location: "Gurgaon, India",
+        package: "₹6.5 - 9 LPA",
+        skills: ["Selenium", "Testing", "Automation", "Java"],
+        applied: false
+    }
+];

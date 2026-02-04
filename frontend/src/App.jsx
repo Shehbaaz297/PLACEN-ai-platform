@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentProfile from './pages/StudentProfile';
+import StudentJobs from './pages/StudentJobs';
 import CompanyDashBoard from './pages/CompanyDashBoard';
 import Postjob from './pages/Postjob';
 import DashboardLayout from './layouts/DashboardLayout';
@@ -27,6 +28,14 @@ function App() {
               <DashboardLayout>
                 <StudentProfile />
               </DashboardLayout>
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/student/jobs"
+          element={(
+            <ProtectedRoute allowedRole="student">
+              <StudentJobs />
             </ProtectedRoute>
           )}
         />
