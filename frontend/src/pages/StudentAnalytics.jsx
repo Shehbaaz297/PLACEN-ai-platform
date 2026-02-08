@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatCard from '../components/StatCard';
-import { getCalculatedStats, getStudentApplications, studentProfile } from '../utils/mockData';
+import { studentProfile } from '../utils/mockData';
+import { getStudentStats, fetchStudentApplications } from '../utils/api';
 
 function StudentAnalytics() {
   const [stats, setStats] = useState({
@@ -11,17 +12,63 @@ function StudentAnalytics() {
     profileCompletion: 85
   });
   const [applications, setApplications] = useState([]);
+  const [parsedSkills, setParsedSkills] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [usedMockData, setUsedMockData] = useState(false);
 
-  // Fetch data on mount and set up polling
+  // Fetch data from backend
   useEffect(() => {
-    const updateData = () => {
-      setStats(getCalculatedStats());
-      setApplications(getStudentApplications());
+    const fetchData = async (isBackground = false) => {
+      try {
+        if (!isBackground) {
+          setLoading(true);
+        }
+
+        const [statsResult, appsResult] = await Promise.all([
+          getStudentStats(),
+          fetchStudentApplications()
+        ]);
+
+        setStats({
+          applications: appsResult.applications.length,
+          interviews: statsResult.stats.interviews,
+          offers: statsResult.stats.offers,
+          profileCompletion: statsResult.stats.profileCompletion
+        });
+
+        setApplications(appsResult.applications);
+        setUsedMockData(statsResult.fromMock || appsResult.fromMock);
+
+        // Load parsed skills from localStorage
+        try {
+          const storedParsed = localStorage.getItem('placen_resume_parsed');
+          if (storedParsed) {
+            const parsed = JSON.parse(storedParsed);
+            if (Array.isArray(parsed.skills)) {
+              setParsedSkills(parsed.skills);
+            }
+          } else {
+            setParsedSkills([]);
+          }
+        } catch (error) {
+          console.error('Failed to read parsed resume skills:', error);
+          setParsedSkills([]);
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      } finally {
+        if (!isBackground) {
+          setLoading(false);
+        }
+      }
     };
 
-    updateData();
+    fetchData(false);
 
-    const interval = setInterval(updateData, 500);
+    // Poll every 5 seconds
+    const interval = setInterval(() => {
+      fetchData(true);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -35,7 +82,8 @@ function StudentAnalytics() {
   const interviewToOfferRate = interviewCount > 0 ? Math.round((offerCount / interviewCount) * 100) : 0;
 
   // Skill progress data (fake percentages for demo)
-  const skillProgresses = studentProfile.skills.map((skill, idx) => ({
+  const skillsSource = parsedSkills.length > 0 ? parsedSkills : studentProfile.skills;
+  const skillProgresses = skillsSource.map((skill, idx) => ({
     skill,
     progress: 60 + (idx * 15) // 60%, 75%, 90%, 105% (capped at 100)
   }));
@@ -58,7 +106,7 @@ function StudentAnalytics() {
       insights.push("You have active interviews. Practice common DSA and system design problems.");
     }
 
-    if (studentProfile.skills.length < 5) {
+    if (skillsSource.length < 5) {
       insights.push("Consider adding more skills to your profile to increase job matches.");
     } else {
       insights.push("Your skill set is diverse. Deepen expertise in your top 2-3 skills.");
@@ -76,20 +124,37 @@ function StudentAnalytics() {
         Track your placement journey metrics and skill progression
       </p>
 
-      {/* Overview Cards Section */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '16px',
-        marginBottom: '32px'
-      }}>
-        <StatCard title="Applications" value={stats.applications} icon="📝" />
-        <StatCard title="Interviews" value={stats.interviews} icon="💬" />
-        <StatCard title="Offers" value={stats.offers} icon="🎉" />
-        <StatCard title="Profile Status" value={`${stats.profileCompletion}%`} progress={stats.profileCompletion} />
-      </div>
+      {loading ? (
+        <div style={{ color: 'var(--text-muted)' }}>Loading analytics...</div>
+      ) : (
+        <>
+          {usedMockData && (
+            <div style={{
+              padding: '12px 16px',
+              borderRadius: '8px',
+              background: 'rgba(59, 130, 246, 0.1)',
+              color: '#2563eb',
+              marginBottom: '16px',
+              fontSize: '13px'
+            }}>
+              💡 Showing cached data - backend may be offline
+            </div>
+          )}
 
-      {/* Application Funnel Section */}
+          {/* Overview Cards Section */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '16px',
+            marginBottom: '32px'
+          }}>
+            <StatCard title="Applications" value={stats.applications} icon="📝" />
+            <StatCard title="Interviews" value={stats.interviews} icon="💬" />
+            <StatCard title="Offers" value={stats.offers} icon="🎉" />
+            <StatCard title="Profile Status" value={`${stats.profileCompletion}%`} progress={stats.profileCompletion} />
+          </div>
+
+          {/* Application Funnel Section */}
       <div style={{
         padding: '24px',
         borderRadius: '12px',
@@ -366,6 +431,8 @@ function StudentAnalytics() {
           ))}
         </div>
       </div>
+        </>
+      )}
     </DashboardLayout>
   );
 }

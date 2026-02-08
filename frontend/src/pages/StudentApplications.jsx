@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { getStudentApplications } from '../utils/mockData';
+import { fetchStudentApplications } from '../utils/api';
+import { getStudentApplications as getMockApplications } from '../utils/mockData';
 
 const tableWrapperStyle = {
   background: 'var(--card-bg, #fff)',
@@ -46,18 +47,35 @@ const statusColors = {
 
 function StudentApplications() {
   const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [usedMockData, setUsedMockData] = useState(false);
 
-  // Fetch applications on mount and set up polling to sync
+  // Fetch applications from backend or fallback to mock data
   useEffect(() => {
-    const updateApplications = () => {
-      setApplications(getStudentApplications());
+    const fetchApplications = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const { applications: fetchedApps, fromMock } = await fetchStudentApplications();
+        setApplications(fetchedApps);
+        setUsedMockData(fromMock);
+      } catch (err) {
+        console.error('Error fetching applications:', err);
+        // Fallback to mock data on error
+        const mockApps = getMockApplications();
+        setApplications(mockApps);
+        setUsedMockData(true);
+        setError('Using cached data');
+      } finally {
+        setLoading(false);
+      }
     };
 
-    updateApplications();
-
-    // Poll for changes every 500ms to catch updates from other pages
-    const interval = setInterval(updateApplications, 500);
-
+    fetchApplications();
+    
+    // Poll every 5 seconds for updates (reduced frequency)
+    const interval = setInterval(fetchApplications, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -68,40 +86,71 @@ function StudentApplications() {
         Track the status of your job applications
       </p>
 
-      <div style={{ marginTop: '24px' }}>
-        <div style={tableWrapperStyle}>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={tableStyle}>
-              <thead>
-                <tr>
-                  <th style={thStyle}>Company</th>
-                  <th style={thStyle}>Role</th>
-                  <th style={thStyle}>Applied Date</th>
-                  <th style={thStyle}>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {applications.map((app) => (
-                  <tr key={`${app.company}-${app.role}`}>
-                    <td style={tdStyle}>{app.company}</td>
-                    <td style={tdStyle}>{app.role}</td>
-                    <td style={tdStyle}>{app.appliedDate}</td>
-                    <td style={tdStyle}>
-                      <span
-                        style={{
-                          ...badgeBase,
-                          ...(statusColors[app.status] || statusColors.Applied)
-                        }}
-                      >
-                        {app.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {usedMockData && (
+        <div style={{
+          padding: '12px 16px',
+          borderRadius: '8px',
+          background: 'rgba(59, 130, 246, 0.1)',
+          color: '#2563eb',
+          marginTop: '16px',
+          fontSize: '13px'
+        }}>
+          💡 Showing cached data - backend may be offline
         </div>
+      )}
+
+      <div style={{ marginTop: '24px' }}>
+        {loading ? (
+          <div style={{
+            padding: '40px 20px',
+            textAlign: 'center',
+            color: 'var(--text-muted)'
+          }}>
+            Loading applications...
+          </div>
+        ) : applications.length === 0 ? (
+          <div style={{
+            padding: '40px 20px',
+            textAlign: 'center',
+            color: 'var(--text-muted)'
+          }}>
+            No applications yet. Start applying to jobs!
+          </div>
+        ) : (
+          <div style={tableWrapperStyle}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={tableStyle}>
+                <thead>
+                  <tr>
+                    <th style={thStyle}>Company</th>
+                    <th style={thStyle}>Role</th>
+                    <th style={thStyle}>Applied Date</th>
+                    <th style={thStyle}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {applications.map((app, idx) => (
+                    <tr key={idx}>
+                      <td style={tdStyle}>{app.company}</td>
+                      <td style={tdStyle}>{app.role}</td>
+                      <td style={tdStyle}>{app.appliedDate}</td>
+                      <td style={tdStyle}>
+                        <span
+                          style={{
+                            ...badgeBase,
+                            ...(statusColors[app.status] || statusColors.Applied)
+                          }}
+                        >
+                          {app.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

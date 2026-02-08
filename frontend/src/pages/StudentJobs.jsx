@@ -1,28 +1,122 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { getAvailableJobs, applyToJob } from '../utils/mockData';
+import { fetchAvailableJobs, applyToJobAPI } from '../utils/api';
+import { getAvailableJobs as getMockJobs, getStudentApplications as getMockApplications } from '../utils/mockData';
 
 function StudentJobs() {
   const [jobs, setJobs] = useState([]);
+  const [appliedJobIds, setAppliedJobIds] = useState(new Set());
   const [filterType, setFilterType] = useState('All');
+  const [loading, setLoading] = useState(true);
+  const [usedMockData, setUsedMockData] = useState(false);
 
-  // Initialize jobs on mount
   useEffect(() => {
-    setJobs(getAvailableJobs());
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const { jobs: fetchedJobs, fromMock: jobsFromMock } = await fetchAvailableJobs();
+        setUsedMockData(jobsFromMock);
+
+        let appliedCompaniesRoles = new Set();
+        if (jobsFromMock) {
+          const mockApps = getMockApplications();
+          appliedCompaniesRoles = new Set(
+            mockApps.map(app => `${app.company}|${app.role}`)
+          );
+        } else {
+          try {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}/student/applications`);
+            if (response.ok) {
+              const applications = await response.json();
+              appliedCompaniesRoles = new Set(
+                applications.map(app => `${app.companyName}|${app.position}`)
+              );
+            }
+          } catch (err) {
+            console.warn('Could not fetch applications:', err);
+          }
+        }
+
+        const jobsWithAppliedStatus = fetchedJobs.map(job => ({
+          ...job,
+          applied: appliedCompaniesRoles.has(`${job.company}|${job.title}`)
+        }));
+
+        setJobs(jobsWithAppliedStatus);
+        const appliedIds = new Set(
+          jobsWithAppliedStatus
+            .filter(j => j.applied)
+            .map(j => j.id)
+        );
+        setAppliedJobIds(appliedIds);
+      } catch (err) {
+        console.error('Error fetching jobs:', err);
+        const mockJobs = getMockJobs();
+        const mockApps = getMockApplications();
+        const appliedSet = new Set(
+          mockApps.map(app => `${app.company}|${app.role}`)
+        );
+        const jobsWithStatus = mockJobs.map(job => ({
+          ...job,
+          applied: appliedSet.has(`${job.company}|${job.title}`)
+        }));
+        setJobs(jobsWithStatus);
+        setUsedMockData(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-  const handleApply = (jobId) => {
-    // Apply to job and update state
-    const success = applyToJob(jobId);
-    if (success) {
-      // Get fresh jobs state and update UI
-      setJobs([...getAvailableJobs()]);
+  const handleApply = async (jobId) => {
+    if (appliedJobIds.has(jobId)) {
+      alert('You have already applied to this job');
+      return;
+    }
+
+    try {
+      setAppliedJobIds(prev => new Set([...prev, jobId]));
+      const { success, error: applyError } = await applyToJobAPI(jobId);
+
+      if (!success) {
+        setAppliedJobIds(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(jobId);
+          return newSet;
+        });
+        alert(applyError || 'Failed to apply to job');
+        return;
+      }
+
+      setJobs(jobs.map(job => 
+        job.id === jobId ? { ...job, applied: true } : job
+      ));
+      alert('Application submitted successfully!');
+    } catch (err) {
+      setAppliedJobIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(jobId);
+        return newSet;
+      });
+      alert('Error applying to job: ' + err.message);
+      console.error('Error:', err);
     }
   };
 
   const filteredJobs = filterType === 'All'
     ? jobs
     : jobs.filter(job => job.type === filterType);
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <h2 style={{ margin: 0 }}>Available Jobs & Internships</h2>
+        <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Loading...</p>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -31,7 +125,19 @@ function StudentJobs() {
         Explore and apply to opportunities that match your profile
       </p>
 
-      {/* Filter Section */}
+      {usedMockData && (
+        <div style={{
+          padding: '12px 16px',
+          borderRadius: '8px',
+          background: 'rgba(59, 130, 246, 0.1)',
+          color: '#2563eb',
+          marginTop: '16px',
+          fontSize: '13px'
+        }}>
+          💡 Showing cached data - backend may be offline
+        </div>
+      )}
+
       <div style={{
         display: 'flex',
         gap: '12px',
@@ -39,7 +145,7 @@ function StudentJobs() {
         marginBottom: '24px',
         flexWrap: 'wrap'
       }}>
-        {['All', 'Internships', 'Placements'].map(filter => (
+        {['All', 'Placement', 'Internship'].map(filter => (
           <button
             key={filter}
             onClick={() => setFilterType(filter)}
@@ -47,12 +153,8 @@ function StudentJobs() {
               padding: '10px 20px',
               borderRadius: '8px',
               border: '1px solid var(--border-color, #e0e0e0)',
-              background: filterType === filter
-                ? 'var(--accent, #3b82f6)'
-                : 'var(--card-bg)',
-              color: filterType === filter
-                ? '#ffffff'
-                : 'var(--text-primary, #111)',
+              background: filterType === filter ? 'var(--accent, #3b82f6)' : 'var(--card-bg)',
+              color: filterType === filter ? '#ffffff' : 'var(--text-primary, #111)',
               cursor: 'pointer',
               fontWeight: filterType === filter ? '600' : '500',
               fontSize: '14px',
@@ -64,34 +166,21 @@ function StudentJobs() {
         ))}
       </div>
 
-      {/* Jobs Grid */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
         gap: '20px'
       }}>
         {filteredJobs.map(job => (
-          <div
-            key={job.id}
-            style={{
-              padding: '20px',
-              borderRadius: '12px',
-              background: 'var(--card-bg)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-              transition: 'box-shadow 0.2s ease',
-              cursor: 'default'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
-            }}
-          >
-            {/* Header with Company and Job Type */}
+          <div key={job.id} style={{
+            padding: '20px',
+            borderRadius: '12px',
+            background: 'var(--card-bg)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px'
+          }}>
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -120,12 +209,8 @@ function StudentJobs() {
               <div style={{
                 padding: '4px 10px',
                 borderRadius: '6px',
-                background: job.type === 'Internship'
-                  ? 'rgba(59, 130, 246, 0.1)'
-                  : 'rgba(34, 197, 94, 0.1)',
-                color: job.type === 'Internship'
-                  ? '#3b82f6'
-                  : '#22c55e',
+                background: job.type === 'Internship' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+                color: job.type === 'Internship' ? '#3b82f6' : '#22c55e',
                 fontSize: '12px',
                 fontWeight: '600',
                 whiteSpace: 'nowrap'
@@ -134,7 +219,6 @@ function StudentJobs() {
               </div>
             </div>
 
-            {/* Location and Package */}
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -177,65 +261,28 @@ function StudentJobs() {
               </div>
             </div>
 
-            {/* Skills Tags */}
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '8px'
-            }}>
-              {job.skills.map((skill, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '20px',
-                    background: 'rgba(106, 111, 245, 0.1)',
-                    color: 'var(--primary, #6a6ff5)',
-                    fontSize: '12px',
-                    fontWeight: '500'
-                  }}
-                >
-                  {skill}
-                </div>
-              ))}
-            </div>
-
-            {/* Apply Button */}
             <button
               onClick={() => handleApply(job.id)}
-              disabled={job.applied}
+              disabled={appliedJobIds.has(job.id)}
               style={{
                 padding: '10px 16px',
                 borderRadius: '8px',
                 border: 'none',
-                background: job.applied
-                  ? 'var(--text-muted, #6b7280)'
-                  : 'var(--primary, #6a6ff5)',
+                background: appliedJobIds.has(job.id) ? 'var(--text-muted, #6b7280)' : 'var(--primary, #6a6ff5)',
                 color: '#ffffff',
                 fontWeight: '600',
                 fontSize: '14px',
-                cursor: job.applied ? 'not-allowed' : 'pointer',
-                opacity: job.applied ? 0.7 : 1,
+                cursor: appliedJobIds.has(job.id) ? 'not-allowed' : 'pointer',
+                opacity: appliedJobIds.has(job.id) ? 0.7 : 1,
                 transition: 'all 0.2s ease'
               }}
-              onMouseEnter={(e) => {
-                if (!job.applied) {
-                  e.currentTarget.style.background = 'var(--primary-dark, #7a5cf0)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!job.applied) {
-                  e.currentTarget.style.background = 'var(--primary, #6a6ff5)';
-                }
-              }}
             >
-              {job.applied ? 'Applied' : 'Apply'}
+              {appliedJobIds.has(job.id) ? 'Applied' : 'Apply'}
             </button>
           </div>
         ))}
       </div>
 
-      {/* Empty State */}
       {filteredJobs.length === 0 && (
         <div style={{
           textAlign: 'center',
@@ -244,9 +291,6 @@ function StudentJobs() {
         }}>
           <p style={{ fontSize: '16px', marginBottom: '8px' }}>
             No {filterType !== 'All' ? filterType.toLowerCase() : 'jobs'} available at the moment.
-          </p>
-          <p style={{ fontSize: '14px' }}>
-            Please check back later or try a different filter.
           </p>
         </div>
       )}
